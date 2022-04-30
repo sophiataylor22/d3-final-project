@@ -1,0 +1,237 @@
+<html>
+<head>
+<title>Final Project</title>
+
+<h1>Insurance Visualizations</h1>
+
+<style>
+body {
+	font: 12px arial;
+}
+
+	.axis path,
+	.axis line {
+		fill: none;
+		stroke: black;
+		shape-rendering: crispEdges;
+	}
+	
+	.dot {
+		stroke: black;
+	}
+		
+	</style>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+
+<div id="body"></div>
+
+<script>
+	
+	var margin = {top: 20, right: 10, bottom: 25, left: 70},
+		width = 460 - margin.left - margin.right,
+		height = 400 - margin.top - margin.bottom;
+				
+	var x = d3.scale.linear()
+		.domain([0, d3.max("insurance.csv", function(d) {return d[0]; })])
+		.range([0, width])
+		.nice();
+		
+	var y = d3.scale.linear()
+		.domain([0, d3.max("insurance.csv", function(d) {return d[1]; })])
+		.range([height, 0])
+		.nice();
+		
+	var color = d3.scale.category20()
+	.domain(["male", "female"])
+	.range(["blue", "fuchsia"]);
+	
+	
+	var xAxis = d3.svg.axis()
+		.scale(x)
+		.orient("bottom")
+		.ticks(20);
+		
+	var yAxis = d3.svg.axis()
+		.scale(y)
+		.orient("left")
+		.ticks(30);
+		
+		var chart1 = d3.select("body").append("svg")
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", height + margin.top + margin.bottom)
+		.append("g")
+		.attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
+		
+		
+		d3.csv("insurance.csv", function(error, data) {
+			data.forEach(function(d) {
+				d.age = +d.age;
+				d.charges = +d.charges;
+			});
+			
+	var tooltip = d3.select("body")
+	.append("div")
+	.attr("class", "tooltip")
+	.style("opacity", 0);
+	
+	var mouseover = function(d) {
+		var html = "<b>" + d.age + "</b> years old, <b/>" + d.charges + "</b> in charges, <b/>" + d.sex + "</b> <b/>";	
+		
+		
+		tooltip.html(html)
+		.style("left", (d3.event.pageX + 15) + "px")
+		.style("top", (d3.event.pageY -28) + "px")
+		.transition()
+		.duration(300)
+		.style("opacity", 1)		
+	}
+		
+	var mousemove = function(d) {
+		tooltip		
+	}
+				
+	var mouseleave = function(d) {
+		tooltip.transition()
+		.duration(100)
+		.style("opacity", 0)		
+	}
+						
+	x.domain(d3.extent(data, function(d) {return d.age;}));
+	y.domain(d3.extent(data, function(d) {return d.charges;}));
+		
+		chart1.append("g")
+		.attr("class", "x axis")
+		.attr("transform", "translate(0, " + height + ")")
+		.call(xAxis);
+		
+		chart1.append("text")
+		.attr("transform", "translate("+(width - 10)+","  + height + ")")
+		.text("age");
+		
+	chart1.append("g")
+		.attr("class", "y axis")
+		.call(yAxis)
+		.append("text")
+		.text("charges");
+		
+	chart1.selectAll(".dot")
+		.data(data)
+		.enter().append("circle")
+		.attr("class", "dot")
+		.attr("r", 3)
+		.attr("cx", function(d) {return x(d.age); })
+		.attr("cy", function(d) {return y(d.charges); })
+		.style("fill", function(d) {return color(d.sex)} )
+		.on("mouseover", mouseover)
+		.on("mousemove", mousemove)
+		.on("mouseleave", mouseleave);
+		
+		});		
+				
+	var x2 = d3.scale.linear()
+		.domain([0, d3.max("insurance.csv", function(d) {return d[0]; })])
+		.range([0, width])
+		.nice();
+		
+	var y2 = d3.scale.linear()
+		.domain([0, d3.max("insurance.csv", function(d) {return d[1]; })])
+		.range([height, 0])
+		.nice();
+		
+	var color2 = d3.scale.category20()
+	.domain(["yes", "no"])
+	.range(["red", "green"]);
+	
+	
+	var xAxis2 = d3.svg.axis()
+		.scale(x)
+		.orient("bottom")
+		.ticks(20);
+		
+	var yAxis2 = d3.svg.axis()
+		.scale(y)
+		.orient("left")
+		.ticks(30);
+
+		
+	var chart2 = d3.select("body").append("svg")
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", height + margin.top + margin.bottom)
+		.append("g")
+		.attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
+		
+		
+	d3.csv("insurance.csv", function(error, data) {
+			data.forEach(function(d) {
+				d.age = +d.age;
+				d.bmi = +d.bmi;
+			});
+
+				
+	var tooltip = d3.select("body")
+	.append("div")
+	.attr("class", "tooltip")
+	.style("opacity", 0);
+	
+	var mouseover2 = function(d) {
+		var html = "<b>" + d.age + "</b> years old, <b/>" + d.bmi + "</b> BMI, <b/>" + d.smoker + "</b> smokes <b/>";
+
+		
+	tooltip.html(html)
+		.style("left", (d3.event.pageX + 15) + "px")
+		.style("top", (d3.event.pageY -28) + "px")
+		.transition()
+		.duration(300)
+		.style("opacity", 1)		
+	}
+		
+	var mousemove2 = function(d) {
+		tooltip
+	}
+				
+	var mouseleave2 = function(d) {
+		tooltip.transition()
+		.duration(100)
+		.style("opacity", 0)		
+	}
+						
+	x.domain(d3.extent(data, function(d) {return d.age;}));
+	y.domain(d3.extent(data, function(d) {return d.bmi;}));
+	
+		
+	chart2.append("g")
+		.attr("class", "x axis")
+		.attr("transform", "translate(0, " + height + ")")
+		.call(xAxis2);
+		
+	chart2.append("text")
+		.attr("transform", "translate("+(width - 10)+","  + height + ")")
+		.text("age");
+		
+	chart2.append("g")
+		.attr("class", "y axis")
+		.call(yAxis2)
+		.append("text")
+		.text("BMI");
+		
+	chart2.selectAll(".dot")
+		.data(data)
+		.enter().append("circle")
+		.attr("class", "dot")
+		.attr("r", 3)
+		.attr("cx", function(d) {return x(d.age); })
+		.attr("cy", function(d) {return y(d.bmi); })
+		.style("fill", function(d) {return color2(d.smoker)} )
+		.on("mouseover", mouseover2)
+		.on("mousemove", mousemove2)
+		.on("mouseleave", mouseleave2);
+		
+		});		
+			
+</script>
+
+</head>
+</html>
+
+
+
